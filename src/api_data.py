@@ -60,6 +60,39 @@ def retrieve_NASA_sentry_data(
 
     return query_result
 
+def retrieve_NASA_sentry_summary(
+        ip_min : bool = None
+        ):
+    """
+    Retrieve asteroids summary data set from NASA SENTRY API
+
+    Parameters
+    ----------
+    ip_min: `float` or `int` or `bool`
+        Minimum impact probability. Default is None (not filter any data by impact probability)
+
+    Returns
+    -------
+    query_result: `dict`
+        Asteroids data set
+
+    Notes
+    -----
+        (c) 2026 Kiyoaki Okudaira - University of Washington
+    """
+    query_params = {}
+    if ip_min is not None:
+        query_params["ip-min"] = f"{ip_min:g}"
+
+    r = requests.get(NASA_SENTRY_API_ROOT, params=query_params)
+    r.raise_for_status()
+    query_result = r.json()
+
+    if "error" in query_result:
+        raise RuntimeError(f"Sentry API error: {query_result['error']}")
+
+    return query_result
+
 def retrieve_ESA_AEGIS_risk_list():
     """
     Retrieve asteroids risk list from ESA AEGIS API
